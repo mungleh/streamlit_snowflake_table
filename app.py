@@ -73,3 +73,4 @@ with col1:
 with col2:
     if file is not None:
         st.dataframe(file_df, use_container_width=True, height= 700)
+#
