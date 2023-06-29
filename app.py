@@ -3,23 +3,31 @@ import streamlit as st
 import streamlit_nested_layout
 from snowflake.connector import connect
 from snowflake.connector.pandas_tools import write_pandas
-
+from st_pages import Page, show_pages, add_page_title
 
 st.set_page_config(
     layout="wide"
 )
 
-st.markdown(
-            f'''
-            <style>
-                .reportview-container .sidebar-content {{
-                    padding-top: {1}rem;
-                }}
-                .reportview-container .main .block-container {{
-                    padding-top: {1}rem;
-                }}
-            </style>
-            ''',unsafe_allow_html=True)
+st.markdown("""
+        <style>
+               .block-container {
+                    padding-top: 1rem;
+                    padding-bottom: 0rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
+
+add_page_title()
+
+show_pages(
+    [
+        Page("app.py", "Import file"),
+        Page("pages/extract.py", "Extract file")
+    ]
+)
 
 conn = connect(
         user=st.secrets["SNOW_USER"],
@@ -33,7 +41,7 @@ col1, col2 = st.columns(2)
 
 with col1:
 
-    file = st.file_uploader("Sur excel, les lignes commencent par 1 en comptant les headers, pas les dataframes, il y a donc un écart normal de 2 dans le nombre de lignes")
+    file = st.file_uploader("")
     if file is not None:
         file_df = pd.read_excel(file, dtype=str)
 
@@ -45,13 +53,15 @@ with col1:
     col11, col12, col13 = st.columns(3)
 
     with col12:
-        if st.button('envoyer a snowflake'):
+        if st.button('Send to snowflake'):
             success, num_chunks, num_rows, output = write_pandas(
                     conn=conn,
                     df=file_df,
                     table_name=table_name,
                     database=database,
                     schema=schema,
+                    # snowflake error when overwrite is True (missing privileges ?)
+                    # overwrite=True
                 )
             st.write("success =", success)
             st.write("num_chunks =", num_chunks)
@@ -62,4 +72,4 @@ with col1:
 
 with col2:
     if file is not None:
-        st.dataframe(file_df, use_container_width=True, height= 800)
+        st.dataframe(file_df, use_container_width=True, height= 700)
