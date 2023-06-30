@@ -6,6 +6,7 @@ from snowflake.connector.pandas_tools import write_pandas
 from st_pages import Page, show_pages, add_page_title
 
 st.set_page_config(
+    page_title="Import file",
     layout="wide"
 )
 
@@ -21,13 +22,6 @@ st.markdown("""
         """, unsafe_allow_html=True)
 
 add_page_title()
-
-show_pages(
-    [
-        Page("app.py", "Import file"),
-        Page("pages/extract.py", "Extract file")
-    ]
-)
 
 conn = connect(
         user=st.secrets["SNOW_USER"],
