@@ -2,10 +2,14 @@ import pandas as pd
 import streamlit as st
 from snowflake.connector import connect
 import io
+from st_pages import Page, show_pages, add_page_title
 
 st.set_page_config(
+    page_title="Extract file",
     layout="wide"
 )
+
+add_page_title()
 
 buffer = io.BytesIO()
 
